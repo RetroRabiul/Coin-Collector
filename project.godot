@@ -22,6 +22,11 @@ window/size/viewport_height=960
 window/stretch/mode="canvas_items"
 window/handheld/orientation=5
 
+[global_group]
+
+Coin=""
+player=""
+
 [rendering]
 
 renderer/rendering_method="mobile"

@@ -4,6 +4,8 @@ var direction : Vector2
 var min_positions : Vector2 = Vector2(20, 185)
 var max_positions : Vector2 = Vector2(520, 740)
 var speed : int = 350
+var score : int
+var coins_collected_in_level : int
 var can_move : bool
 
 func _process(delta: float) -> void:
@@ -54,3 +56,15 @@ func _on_left_button_button_down() -> void:
 func _on_left_button_button_up() -> void:
 	can_move = false
 	$AnimatedSprite2D.flip_h = false
+
+
+func _on_area_entered(area: Area2D) -> void:
+	if area.is_in_group("Coin"):
+		coins_collected_in_level += 1
+		score += 1
+		get_parent().get_node("UI/CoinsLabel").text = "Coins: " + str(score)
+		get_parent().get_node("UI/CoinsLabelAnimationPlayer").play("ScoreIncreased")
+		
+		if coins_collected_in_level == get_parent().level:
+			coins_collected_in_level = 0
+			get_parent().level_passed()

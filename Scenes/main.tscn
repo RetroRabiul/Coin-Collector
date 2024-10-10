@@ -1,12 +1,52 @@
-[gd_scene load_steps=27 format=3 uid="uid://5vhhyt8kfj3r"]
+[gd_scene load_steps=34 format=3 uid="uid://5vhhyt8kfj3r"]
 
+[ext_resource type="Script" path="res://Scripts/main.gd" id="1_fosrc"]
 [ext_resource type="FontFile" uid="uid://c558cseu0i0m3" path="res://kenvector_future_thin.ttf" id="1_j6oy1"]
 [ext_resource type="Script" path="res://Scripts/player.gd" id="2_j80xu"]
 [ext_resource type="Texture2D" uid="uid://y081rad8ncx7" path="res://Player/Idle.png" id="3_0gdxe"]
 [ext_resource type="Texture2D" uid="uid://cjbsutawg5yh" path="res://Player/Back.png" id="3_84wg8"]
+[ext_resource type="PackedScene" uid="uid://cki5tk13tl1gn" path="res://Scenes/confetti_particles.tscn" id="3_l5yh7"]
 [ext_resource type="Texture2D" uid="uid://d1fbwp3odr8u4" path="res://Player/Death.png" id="4_nrgdo"]
 [ext_resource type="Texture2D" uid="uid://62rkp5je56o8" path="res://Player/Front.png" id="5_1bwjk"]
+[ext_resource type="Texture2D" uid="uid://cotbnqajgs0gc" path="res://Heart.png" id="5_3qde4"]
 [ext_resource type="Texture2D" uid="uid://d0urflm1fb37j" path="res://Player/Walk.png" id="7_hnfec"]
+[ext_resource type="PackedScene" uid="uid://vm1wm1qykl48" path="res://Scenes/coin.tscn" id="8_ukcr7"]
+
+[sub_resource type="Animation" id="Animation_hj7y1"]
+resource_name = "ScoreIncreased"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/CoinsLabel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_gknbm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/CoinsLabel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_3wmat"]
+_data = {
+"RESET": SubResource("Animation_gknbm"),
+"ScoreIncreased": SubResource("Animation_hj7y1")
+}
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_pwnut"]
 atlas = ExtResource("3_84wg8")
@@ -159,6 +199,9 @@ animations = [{
 size = Vector2(8, 14)
 
 [node name="Main" type="Node"]
+script = ExtResource("1_fosrc")
+coin = ExtResource("8_ukcr7")
+confetti = ExtResource("3_l5yh7")
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
@@ -178,6 +221,7 @@ offset_top = 25.0
 offset_right = 134.0
 offset_bottom = 93.0
 grow_horizontal = 2
+pivot_offset = Vector2(133, 34)
 theme_override_fonts/font = ExtResource("1_j6oy1")
 theme_override_font_sizes/font_size = 60
 text = "Coins: 0"
@@ -252,7 +296,34 @@ offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Player" type="Area2D" parent="."]
+[node name="CoinsLabelAnimationPlayer" type="AnimationPlayer" parent="UI"]
+root_node = NodePath("../..")
+libraries = {
+"": SubResource("AnimationLibrary_3wmat")
+}
+speed_scale = 3.5
+
+[node name="HealthBar" type="TextureProgressBar" parent="UI"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -100.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+max_value = 10000.0
+value = 10000.0
+fill_mode = 5
+nine_patch_stretch = true
+texture_progress = ExtResource("5_3qde4")
+
+[node name="Player" type="Area2D" parent="." groups=["player"]]
 position = Vector2(270, 480)
 scale = Vector2(3, 3)
 script = ExtResource("2_j80xu")
@@ -274,3 +345,4 @@ shape = SubResource("RectangleShape2D_ffvsd")
 [connection signal="button_up" from="UI/RightButton" to="Player" method="_on_right_button_button_up"]
 [connection signal="button_down" from="UI/LeftButton" to="Player" method="_on_left_button_button_down"]
 [connection signal="button_up" from="UI/LeftButton" to="Player" method="_on_left_button_button_up"]
+[connection signal="area_entered" from="Player" to="Player" method="_on_area_entered"]

@@ -1,15 +1,86 @@
-[gd_scene load_steps=3 format=3 uid="uid://vm1wm1qykl48"]
+[gd_scene load_steps=7 format=3 uid="uid://vm1wm1qykl48"]
 
 [ext_resource type="Texture2D" uid="uid://br8fhnncsxnlw" path="res://Coin.png" id="1_amjiy"]
+[ext_resource type="Script" path="res://Scripts/coin.gd" id="1_sg2ck"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ed4e2"]
 radius = 80.0999
 
-[node name="Coin" type="Area2D"]
+[sub_resource type="Animation" id="Animation_0s5bb"]
+resource_name = "CoinCollected"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(2.5, 2.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_ckmyc"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6q2gw"]
+_data = {
+"CoinCollected": SubResource("Animation_0s5bb"),
+"RESET": SubResource("Animation_ckmyc")
+}
+
+[node name="Coin" type="Area2D" groups=["Coin"]]
 scale = Vector2(0.25, 0.25)
+script = ExtResource("1_sg2ck")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_amjiy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_ed4e2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6q2gw")
+}
+speed_scale = 2.3
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

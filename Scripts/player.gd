@@ -14,6 +14,10 @@ func _process(delta: float) -> void:
 		position.x = clamp(position.x, min_positions.x, max_positions.x)
 		position.y = clamp(position.y, min_positions.y, max_positions.y)
 	else :
+		if get_parent().game_over:
+			$AnimatedSprite2D.animation = "Death"
+			return
+		
 		$AnimatedSprite2D.animation = "Idle"
 
 func _on_up_button_button_down() -> void:

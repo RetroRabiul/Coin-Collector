@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://5vhhyt8kfj3r"]
+[gd_scene load_steps=35 format=3 uid="uid://5vhhyt8kfj3r"]
 
 [ext_resource type="Script" path="res://Scripts/main.gd" id="1_fosrc"]
 [ext_resource type="FontFile" uid="uid://c558cseu0i0m3" path="res://kenvector_future_thin.ttf" id="1_j6oy1"]
@@ -11,21 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://cotbnqajgs0gc" path="res://Heart.png" id="5_3qde4"]
 [ext_resource type="Texture2D" uid="uid://d0urflm1fb37j" path="res://Player/Walk.png" id="7_hnfec"]
 [ext_resource type="PackedScene" uid="uid://vm1wm1qykl48" path="res://Scenes/coin.tscn" id="8_ukcr7"]
-
-[sub_resource type="Animation" id="Animation_hj7y1"]
-resource_name = "ScoreIncreased"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("UI/CoinsLabel:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5, 1),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
-}
+[ext_resource type="Script" path="res://Scripts/game_over.gd" id="12_d04r3"]
 
 [sub_resource type="Animation" id="Animation_gknbm"]
 length = 0.001
@@ -40,6 +26,21 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_hj7y1"]
+resource_name = "ScoreIncreased"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("UI/CoinsLabel:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.1, 1.1), Vector2(1, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_3wmat"]
@@ -211,6 +212,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Background" type="ColorRect" parent="UI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.720367, 0.302908, 0.301167, 1)
+
 [node name="CoinsLabel" type="Label" parent="UI"]
 layout_mode = 1
 anchors_preset = 5
@@ -337,6 +347,68 @@ autoplay = "Idle"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("RectangleShape2D_ffvsd")
 
+[node name="GameOver" type="Control" parent="."]
+visible = false
+z_index = 10
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("12_d04r3")
+
+[node name="Background" type="ColorRect" parent="GameOver"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.882353)
+
+[node name="GameOverTitle" type="Label" parent="GameOver"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -133.0
+offset_top = 25.0
+offset_right = 134.0
+offset_bottom = 93.0
+grow_horizontal = 2
+pivot_offset = Vector2(133, 34)
+theme_override_fonts/font = ExtResource("1_j6oy1")
+theme_override_font_sizes/font_size = 60
+text = "Game Over!"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameOver"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -160.0
+offset_top = -80.0
+offset_right = 160.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="PlayAgainButton" type="Button" parent="GameOver/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_j6oy1")
+theme_override_font_sizes/font_size = 50
+text = "Play Again"
+
+[node name="HomeButton" type="Button" parent="GameOver/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_j6oy1")
+theme_override_font_sizes/font_size = 50
+text = "Home"
+
 [connection signal="button_down" from="UI/UpButton" to="Player" method="_on_up_button_button_down"]
 [connection signal="button_up" from="UI/UpButton" to="Player" method="_on_up_button_button_up"]
 [connection signal="button_down" from="UI/DownButton" to="Player" method="_on_down_button_button_down"]
@@ -346,3 +418,5 @@ shape = SubResource("RectangleShape2D_ffvsd")
 [connection signal="button_down" from="UI/LeftButton" to="Player" method="_on_left_button_button_down"]
 [connection signal="button_up" from="UI/LeftButton" to="Player" method="_on_left_button_button_up"]
 [connection signal="area_entered" from="Player" to="Player" method="_on_area_entered"]
+[connection signal="pressed" from="GameOver/VBoxContainer/PlayAgainButton" to="GameOver" method="_on_play_again_button_pressed"]
+[connection signal="pressed" from="GameOver/VBoxContainer/HomeButton" to="GameOver" method="_on_home_button_pressed"]
